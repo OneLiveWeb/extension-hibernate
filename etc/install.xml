@@ -36,7 +36,7 @@
 	<target name="update-dependencies" depends="clean">
 		<mkdir dir="${build}"/>
 
-		<get src="http://dev.ijsolutions.ca/jenkins/job/@BRANCH@extension-hibernate/lastSuccessfulBuild/artifact/deploy/extension-hibernate.zip" dest="${build}/hibernate.zip" />	
+		<get src="http://dev.ijsolutions.ca/jenkins/job/extension-hibernate/lastSuccessfulBuild/artifact/deploy/extension-hibernate.zip" dest="${build}/hibernate.zip" />	
 	  
   </target>
     
