@@ -172,7 +172,7 @@
 
 			<!-- publish results to anthill -->
 		 	<copy file="${deployDir}/builds/extension-hibernate.zip" overwrite="true"
-		        tofile="${deployDir}/extension-hibernate-zip.zip"/>
+		        tofile="${deployDir}/extension-hibernate.zip"/>
 			<copy overwrite="true"  file="${etc}/install.js"
 				    tofile="${deployDir}/install.js">
 				 		 <filterset>
