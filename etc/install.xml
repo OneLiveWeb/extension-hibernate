@@ -16,7 +16,7 @@
 	     </copy>
 	  	
 	    <delete>
-	      <fileset file="${dockerlib}/extension-saml-**.jar"/>
+	      <fileset file="${dockerlib}/extension-hibernate-**.jar"/>
 	    
 	    </delete>
 	  	
