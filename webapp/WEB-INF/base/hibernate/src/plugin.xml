@@ -1,0 +1,46 @@
+<beans projectname="hibernate" depends="entermedia">
+
+<bean id="hibernateSearcher" class="org.oneliveweb.hibernate.HibernateSearcher" scope="prototype">
+		<property name="searcherManager">
+			<ref bean="searcherManager" />
+		</property>
+		<property name="rootDirectory">
+			<ref bean="root" />
+		</property>
+		<property name="moduleManager">
+			<ref bean="moduleManager" />
+		</property>
+	</bean>
+	
+	
+	<bean id="elasticHibernateSearcher" class="org.oneliveweb.hibernate.ElasticHibernateSearcher" scope="prototype">
+		<property name="searcherManager">
+			<ref bean="searcherManager" />
+		</property>
+		<property name="rootDirectory">
+			<ref bean="root" />
+		</property>
+		<property name="moduleManager">
+			<ref bean="moduleManager" />
+		</property>
+			<property name="elasticNodeManager">
+			<ref bean="elasticNodeManager" />
+		</property>
+	</bean>
+	
+	
+	<bean id="hibernateManager" class="org.oneliveweb.hibernate.HibernateManager" scope="prototype">
+		<property name="moduleManager">
+			<ref bean="moduleManager" />
+		</property>
+			<property name="pageManager">
+			<ref bean="pageManager" />
+		</property>
+	</bean>
+
+
+
+
+</beans>
+
+ 
