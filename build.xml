@@ -172,13 +172,21 @@
 
 			<!-- publish results to anthill -->
 		 	<copy file="${deployDir}/builds/extension-hibernate.zip" overwrite="true"
-		        tofile="${deployDir}/extension-saml.zip"/>
+		        tofile="${deployDir}/extension-hibernate-zip.zip"/>
 			<copy overwrite="true"  file="${etc}/install.js"
 				    tofile="${deployDir}/install.js">
 				 		 <filterset>
 				 		      <filter token="BRANCH" value="${branch}"/>
 				 		    </filterset>
 		 	</copy>
+		
+		<copy overwrite="true"  file="${etc}/install.xml"
+						    tofile="${deployDir}/install.xml">
+						 		 <filterset>
+						 		      <filter token="BRANCH" value="${branch}"/>
+						 		    </filterset>
+				 	</copy>
+				
 		
 
 		</target>
