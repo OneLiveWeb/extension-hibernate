@@ -179,7 +179,7 @@
 				 		      <filter token="BRANCH" value="${branch}"/>
 				 		    </filterset>
 		 	</copy>
-		 	<copy file="${etc}/samlextension.xml" overwrite="true"
+		 	<copy file="${etc}/hibernateextension.xml" overwrite="true"
 					        tofile="${deployDir}/samlextension.xml">
 					 <filterset>
 					      <filter token="BRANCH" value="${branch}"/>
