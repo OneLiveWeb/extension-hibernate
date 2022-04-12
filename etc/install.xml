@@ -1,27 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="entermedia-hibernate" basedir="." default="default" >
+<project basedir="." default="default" name="upgrade">
 
-	<property name="dockerwebapp" location="/opt/entermediadb/webapp"/>
- 	<property name="dockerlib" location="${dockerwebapp}/WEB-INF/lib"/>
-	
-  	<target name="default" depends="extend"/>
+  <target name="default" depends="clean, update-dependencies, unwar, upgrade"/>
+   
+    <property name="appname" value="${ant.project.name}"/>
+    <property name="org" value="OneLiveWev"/>
+    <property name="src" location="WEB-INF/src"/>
+    <property name="lib" location="WEB-INF/lib"/>
+    <property name="resources" location="resources"/>
+    <property name="build" location="./tmp/oe_upgrade"/>
+    <property name="wardir" location="${build}/wartmp"/>
+    <property name="webinf" location="WEB-INF"/>
+    
+
+	<!-- 
+		========================================================================
+		Anthill build server properties.  These properties will be passed in
+		by anthill when this script is executed on the build server.
+		
+			- "version" is set by the version adapter
+			- "deployDir" is set by anthill.publish.dir
+		========================================================================
+	--> 
+  	<property name="version"  value="dev"/>
+  	<property name="deployDir" location="deploy"/>
+  	
+  	<!-- A convenience variable for documentation output -->
+  	<property name="versionDir" location="${deployDir}/${version}"/>
+  	<property name="versionedApp" value="${appname}-${version}"/>
+
+  <target name="clean">
+  </target>
   
-	<target name="extend">
-	  	<echo>Reinstall Hibernate plugin(s)</echo>
-	 	 <delete failonerror="false">
-	       <fileset dir="${dockerwebapp}/WEB-INF/base/hibernate/"/>
-	     </delete>
-	     <copy todir="${dockerwebapp}/WEB-INF/base/hibernate" preservelastmodified="true">
-	       <fileset dir="${basedir}/base/hibernate"/>
-	     </copy>
-	  	
-	    <delete>
-	      <fileset file="${dockerlib}/extension-hibernate-**.jar"/>
-	    
-	    </delete>
-	  	
-	    <copy todir="${dockerlib}" overwrite="false" preservelastmodified="true">
-	      <fileset file="${basedir}/lib/**.jar"/>
-	    </copy>
-	</target>
+	
+	<target name="update-dependencies" depends="clean">
+		<mkdir dir="${build}"/>
+
+		<get src="http://dev.ijsolutions.ca/jenkins/job/@BRANCH@extension-hibernate/lastSuccessfulBuild/artifact/deploy/extension-hibernate.zip" dest="${build}/hibernate.zip" />	
+	  
+  </target>
+    
+  <target name="unwar">
+  	<mkdir dir="${build}/unpacked"/>
+    <unzip dest="${build}/unpacked" src="${build}/hibernate.zip" />
+  </target>
+  
+  <target name="upgrade">
+  	<echo>Delete old Hibernate Libs</echo>
+    <delete>
+      <fileset dir="./lib" includes="@BRANCH@extension-hibernate**.jar"/>
+    	<!-- TODO Clean other libs too -->
+    </delete>
+  	
+    <copy todir="./lib" overwrite="false" preservelastmodified="true">
+      <fileset file="${build}/unpacked/lib/*.jar"/>
+    </copy>
+
+   
+
+    <delete failonerror="false">
+       <fileset dir="../WEB-INF/base/hibernate/"/>
+     </delete>
+     <copy todir="../WEB-INF/base/hibernate" preservelastmodified="true">
+       <fileset dir="${build}/unpacked/base/hibernate"/>
+     </copy>
+
+  	
+    <delete dir="${build}"/>
+    
+  </target>
+
+  
+ 
 </project>
