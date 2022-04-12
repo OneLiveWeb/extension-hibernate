@@ -16,7 +16,7 @@
     <property name="wardir" location="${build}/wartmp"/>
     <property name="webapp" location="${basedir}/webapp"/>
 	<property name="webinf" location="${webapp}/WEB-INF"/>
-	<property name="branch" value="em9_" />
+	<property name="branch" value="em10_" />
 				<property name="majorversion" value="9" />
 
 	<!--
@@ -103,7 +103,7 @@
 			<zipfileset dir="${lib}" prefix="lib" excludes="compile/**"/>
 
 			<zipfileset dir="${deployDir}/builds/" includes="${branch}${appname}-${version}.jar" prefix="lib"/>
-			<zipfileset dir="${webapp}/WEB-INF/base/hibernate" prefix="base/saml" />
+			<zipfileset dir="${webapp}/WEB-INF/base/hibernate" prefix="base/hibernate" />
       <zipfileset dir="${etc}" includes="install.xml"/>		
 		</zip>
   </target>
