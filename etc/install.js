@@ -9,7 +9,7 @@ importPackage( Packages.org.entermediadb.modules.update );
 
 var name = "extension-hibernate";
 
-var war = "http://dev.ijsolutions.ca/jenkins/job/@BRANCH@" + name + "/lastSuccessfulBuild/artifact/deploy/" + name + ".zip";
+var war = "http://dev.ijsolutions.ca/jenkins/job/" + name + "/lastSuccessfulBuild/artifact/deploy/" + name + ".zip";
 
 var root = moduleManager.getBean("root").getAbsolutePath();
 var web = root + "/WEB-INF";
