@@ -1,0 +1,25 @@
+<node id="blackboxnode001" name="Default Single Node">
+
+    <property id="cluster.name">hibernate</property>
+
+
+     <!-- 
+     <property name="index.store.type">mmapfs</property>
+     <property name="index.store.fs.mmapfs.enabled">true</property>
+     <property name="index.merge.policy.merge_factor">20</property>
+      -->
+      <property id="path.home">${webroot}/WEB-INF/elastic/${nodeid}</property>
+     <property id="path.logs">${webroot}/WEB-INF/elastic/${nodeid}/logs</property>
+     <property id="path.repo">${webroot}/WEB-INF/data/repos</property>     
+
+	
+	<property id="discovery.zen.ping.unicast.hosts">localhost</property>
+	
+
+
+	
+	
+	
+	
+	
+</node>
