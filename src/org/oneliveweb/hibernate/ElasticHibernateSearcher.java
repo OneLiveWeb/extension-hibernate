@@ -3,27 +3,69 @@ package org.oneliveweb.hibernate;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import org.entermediadb.elasticsearch.searchers.BaseElasticSearcher;
+import org.entermediadb.scripts.Script;
+import org.entermediadb.scripts.ScriptManager;
 import org.hibernate.Session;
 import org.openedit.Data;
 import org.openedit.ModuleManager;
 import org.openedit.OpenEditException;
-import org.openedit.WebPageRequest;
-import org.openedit.hittracker.HitTracker;
-import org.openedit.hittracker.SearchQuery;
-import org.openedit.hittracker.Term;
+import org.openedit.event.EventManager;
+import org.openedit.page.Page;
+import org.openedit.page.manage.PageManager;
 import org.openedit.users.User;
 
 public class ElasticHibernateSearcher extends BaseElasticSearcher {
 
 	protected HibernateManager fieldHibernateManager;
 	protected ModuleManager fieldModuleManager;
+	 
+	protected ScriptManager fieldScriptManager;
+	protected PageManager fieldPageManager;
+
 	
 	
-	
+
+	public ScriptManager getScriptManager() {
+		return fieldScriptManager;
+	}
+
+	public void setScriptManager(ScriptManager inScriptManager) {
+		fieldScriptManager = inScriptManager;
+	}
+
+	public PageManager getPageManager() {
+		return fieldPageManager;
+	}
+
+	public void setPageManager(PageManager inPageManager) {
+		fieldPageManager = inPageManager;
+	}
+
+	public ModuleManager getModuleManager() {
+		return fieldModuleManager;
+	}
+
+	public void setModuleManager(ModuleManager inModuleManager) {
+		fieldModuleManager = inModuleManager;
+	}
+
+	public EventManager getEventManager() {
+		if (fieldEventManager == null) {
+			fieldEventManager = (EventManager) getModuleManager().getBean(getCatalogId(), "eventManager");
+			
+		}
+
+		return fieldEventManager;
+	}
+
+	public void setEventManager(EventManager inEventManager) {
+		fieldEventManager = inEventManager;
+	}
 
 	public HibernateManager getHibernateManager() {
 		if (fieldHibernateManager == null) {
@@ -81,8 +123,27 @@ public class ElasticHibernateSearcher extends BaseElasticSearcher {
 	}
 	
 	
+	public Object runDataScript(Data inData, String inType, HashMap extras) {
+		Page page = getPageManager().getPage("/" + getCatalogId() + "/events/scripts/" + getSearchType() + "/" + inType + ".groovy");
+		if(page.exists()) {
+			Script script = getScriptManager().loadScript(page.getPath());
+			if(extras == null) {
+				extras = new HashMap();				
+			}
+			extras.put("searcher", this);
+			extras.put("data", inData);	
+			return  getScriptManager().execScript(extras, script);		
+		}
+		return null;		
+	}
+	
+	
 	@Override
 	public void saveData(Data inData) {
+		
+		runDataScript(inData, "presave", null);
+		
+		
 		
 		HibernateData data = (HibernateData)inData;
 		Session session= getHibernateManager().getCurrentSession();
@@ -129,6 +190,12 @@ public class ElasticHibernateSearcher extends BaseElasticSearcher {
 		if(inId == null) {
 			return null;
 			
+		}
+		if("generictableedit".equals(inId)) {
+			return null; //This is nonsense
+		}
+		if("generictablesave".equals(inId)) {
+			return null; //This is nonsense
 		}
 		long id = Long.valueOf(inId);
 		Object hit = getHibernateManager().getCurrentSession().get(getClassName() , id);
