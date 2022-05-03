@@ -79,7 +79,7 @@ files.copyFileByMatch( tmp + "/lib/txw2*.jar", web + "/lib/");
 
 
 files.deleteMatch( web + "/WEB-INF/base/hibernate/")
-files.copyFileByMatch( tmp + "/base/saml/", root + "/WEB-INF/base/hibernate/");
+files.copyFileByMatch( tmp + "/base/hibernate/", root + "/WEB-INF/base/hibernate/");
 
 
 
