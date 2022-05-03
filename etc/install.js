@@ -76,6 +76,9 @@ files.copyFileByMatch( tmp + "/lib/txw2*.jar", web + "/lib/");
 /*  End Hibernate */
 
 
+files.deleteMatch( web + "/lib/em10_hibernate*.jar");
+files.copyFileByMatch( tmp + "/lib/em10_hibernate*.jar", web + "/lib/");
+
 
 
 files.deleteMatch( web + "/WEB-INF/base/hibernate/")
