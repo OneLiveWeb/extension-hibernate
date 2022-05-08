@@ -165,7 +165,7 @@ public class ElasticHibernateSearcher extends BaseElasticSearcher {
 			return null;
 		}
 		long id = Long.valueOf(inHit.getId());
-		Object hit = (Data) getHibernateManager().getCurrentSession().get(getClassName() , id);
+		Object hit =  getHibernateManager().getCurrentSession().get(getClassName() , id);
 		if(hit == null) {
 			//Object was deleted so remove from index too?
 			super.delete(inHit, null);
