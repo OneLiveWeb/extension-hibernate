@@ -91,8 +91,11 @@ public class HibernateSearcher extends BaseElasticSearcher {
 	
 	@Override
 	public Data loadData(Data inHit) {
+		if(inHit == null) {
+			return null;
+		}
 		long id = Long.valueOf(inHit.getId());
-		Object hit = (Data) getHibernateManager().getCurrentSession().get(getClassName() , id);
+		Object hit =  getHibernateManager().getCurrentSession().get(getClassName() , id);
 		HibernateData data = new HibernateData();
 		data.setData(hit);
 		
