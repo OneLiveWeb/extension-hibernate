@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.entermediadb.elasticsearch.searchers.BaseElasticSearcher;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.openedit.Data;
 import org.openedit.ModuleManager;
 import org.openedit.OpenEditException;
@@ -125,9 +126,17 @@ public class HibernateSearcher extends BaseElasticSearcher {
 	
 	@Override
 	public HitTracker search(SearchQuery inQuery) {
-		String querystring = createQueryString(inQuery);
+		String querystring = createQueryString(inQuery);		
+		Query query = getHibernateManager().getCurrentSession().createQuery(querystring);
+		for (Iterator iterator = inQuery.getTerms().iterator(); iterator.hasNext();) {
+			Term term = (Term) iterator.next();
+			query.setParameter(term.getId(), term.getValue());
+
+			
+		}
 		
-		List hits = getHibernateManager().getCurrentSession().createQuery(querystring).list();
+		
+		List hits = query.list();
 		
 		return new HibernateHitTracker(hits);
 		
@@ -153,7 +162,7 @@ public class HibernateSearcher extends BaseElasticSearcher {
 			String field = term.getDetail().getId();
 			buffer.append(field);
 			buffer.append("=");
-			buffer.append(term.getValue());
+			buffer.append(":" + field);
 			if(iterator.hasNext()) {
 				buffer.append(" and ");
 			}		
