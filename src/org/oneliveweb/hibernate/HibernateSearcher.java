@@ -13,6 +13,7 @@ import org.openedit.Data;
 import org.openedit.ModuleManager;
 import org.openedit.OpenEditException;
 import org.openedit.WebPageRequest;
+import org.openedit.data.PropertyDetail;
 import org.openedit.hittracker.HitTracker;
 import org.openedit.hittracker.SearchQuery;
 import org.openedit.hittracker.Term;
@@ -22,9 +23,6 @@ public class HibernateSearcher extends BaseElasticSearcher {
 
 	protected HibernateManager fieldHibernateManager;
 	protected ModuleManager fieldModuleManager;
-	
-	
-	
 
 	public HibernateManager getHibernateManager() {
 		if (fieldHibernateManager == null) {
@@ -57,7 +55,7 @@ public class HibernateSearcher extends BaseElasticSearcher {
 		saveData(inData);
 		clearIndex();
 	}
-	
+
 	@Override
 	public Data createNewData() {
 		try {
@@ -70,91 +68,89 @@ public class HibernateSearcher extends BaseElasticSearcher {
 		} catch (Exception e) {
 			throw new OpenEditException(e);
 		}
-		
+
 	}
-	
-	
-	
+
 	@Override
 	public void saveData(Data inData) {
-		//https://www.baeldung.com/hibernate-save-persist-update-merge-saveorupdate
-		
-		HibernateData data = (HibernateData)inData;
-		Session session= getHibernateManager().getCurrentSession();
+		// https://www.baeldung.com/hibernate-save-persist-update-merge-saveorupdate
+
+		HibernateData data = (HibernateData) inData;
+		Session session = getHibernateManager().getCurrentSession();
 		session.beginTransaction();
 		session.merge(data.getData());
 		session.getTransaction().commit();
 
 		session.close();
-		
+
 	}
-	
-	
+
 	@Override
 	public Data loadData(Data inHit) {
-		if(inHit == null) {
+		if (inHit == null) {
 			return null;
 		}
 		long id = Long.valueOf(inHit.getId());
-		Object hit =  getHibernateManager().getCurrentSession().get(getClassName() , id);
+		Object hit = getHibernateManager().getCurrentSession().get(getClassName(), id);
 		HibernateData data = new HibernateData();
 		data.setData(hit);
-		
+
 		return data;
-		
+
 	}
 
 	private String getClassName() {
 		return getPropertyDetails().getBaseSetting("package") + "." + getPropertyDetails().getBaseSetting("class");
 	}
-	
-	
+
 	@Override
 	public Object searchById(String inId) {
-		if(inId == null) {
+		if (inId == null) {
 			return null;
-			
+
 		}
 		long id = Integer.valueOf(inId);
-		Object hit = getHibernateManager().getCurrentSession().get(getClassName() , id);
+		Object hit = getHibernateManager().getCurrentSession().get(getClassName(), id);
 		HibernateData data = new HibernateData();
 		data.setData(hit);
-		
+
 		return data;
 	}
-	
-	
+
 	@Override
 	public HitTracker search(SearchQuery inQuery) {
-		String querystring = createQueryString(inQuery);		
+		String querystring = createQueryString(inQuery);
 		Query query = getHibernateManager().getCurrentSession().createQuery(querystring);
 		for (Iterator iterator = inQuery.getTerms().iterator(); iterator.hasNext();) {
 			Term term = (Term) iterator.next();
-			query.setParameter(term.getId(), term.getValue());
+			PropertyDetail detail = getDetail(term.getId());
+			if (detail != null  && detail.isNumber()) {
+				Integer value = Integer.valueOf(term.getValue());
+				query.setParameter(term.getId(), value);
 
-			
+			} else {
+				query.setParameter(term.getId(), term.getValue());
+			}
+
 		}
-		
-		
+
 		List hits = query.list();
-		
+
 		return new HibernateHitTracker(hits);
-		
+
 	}
-	
-	
+
 	@Override
 	public HitTracker getAllHits(WebPageRequest inReq) {
 		// TODO Auto-generated method stub
 		return getAllHits();
 	}
-	
 
 	protected String createQueryString(SearchQuery inQuery) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("from ");
 		buffer.append(getNewDataName());
-		if(inQuery.getTerms().size() > 0) {
+		if (inQuery.getTerms().size() > 0) {
 			buffer.append(" where ");
 		}
 		for (Iterator iterator = inQuery.getTerms().iterator(); iterator.hasNext();) {
@@ -163,12 +159,12 @@ public class HibernateSearcher extends BaseElasticSearcher {
 			buffer.append(field);
 			buffer.append("=");
 			buffer.append(":" + field);
-			if(iterator.hasNext()) {
+			if (iterator.hasNext()) {
 				buffer.append(" and ");
-			}		
+			}
 		}
-		 
-		if(inQuery.getSorts() != null && inQuery.getSorts().size() > 0) {
+
+		if (inQuery.getSorts() != null && inQuery.getSorts().size() > 0) {
 			buffer.append(" ");
 			buffer.append("order by");
 			buffer.append(" ");
@@ -179,8 +175,7 @@ public class HibernateSearcher extends BaseElasticSearcher {
 
 	@Override
 	public String getIndexId() {
-		if (fieldIndexId == -1)
-		{
+		if (fieldIndexId == -1) {
 			fieldIndexId = System.currentTimeMillis();
 		}
 		return String.valueOf(fieldIndexId);
@@ -205,8 +200,8 @@ public class HibernateSearcher extends BaseElasticSearcher {
 	@Override
 	public void delete(Data inData, User inUser) {
 		try {
-			HibernateData data = (HibernateData)inData;
-			Session session= getHibernateManager().getCurrentSession();
+			HibernateData data = (HibernateData) inData;
+			Session session = getHibernateManager().getCurrentSession();
 			session.beginTransaction();
 			session.delete(data.getData());
 			session.getTransaction().commit();
@@ -220,10 +215,10 @@ public class HibernateSearcher extends BaseElasticSearcher {
 
 	@Override
 	public void saveAllData(Collection<Data> inAll, User inUser) {
-	for (Iterator iterator = inAll.iterator(); iterator.hasNext();) {
-		Data data = (Data) iterator.next();
-		saveData(data);
-	}
+		for (Iterator iterator = inAll.iterator(); iterator.hasNext();) {
+			Data data = (Data) iterator.next();
+			saveData(data);
+		}
 
 	}
 
