@@ -1,7 +1,6 @@
 package org.oneliveweb.hibernate;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -134,10 +133,13 @@ public class HibernateSearcher extends BaseElasticSearcher {
 
 		}
 
-		List hits = query.list();
-
-		return new HibernateHitTracker(hits);
-
+		List list = query.list();
+		HibernateHitTracker hits = new HibernateHitTracker(list);
+		hits.setSearcherManager(getSearcherManager());
+		hits.setIndexId(getIndexId());
+		hits.setSearcher(this);
+		hits.setSearchQuery(inQuery);
+		return hits;
 	}
 
 	@Override
@@ -224,9 +226,22 @@ public class HibernateSearcher extends BaseElasticSearcher {
 
 	@Override
 	public HitTracker getAllHits() {
-		List hits = getHibernateManager().getCurrentSession().createQuery("from " + getNewDataName()).list();
-		return new HibernateHitTracker(hits);
+		List list = getHibernateManager().getCurrentSession().createQuery("from " + getNewDataName()).list();
+		HibernateHitTracker hits = new HibernateHitTracker(list);
+		hits.setSearcherManager(getSearcherManager());
+		hits.setIndexId(getIndexId());
+		hits.setSearcher(this);
+		hits.setSearchQuery(new SearchQuery());
+		return hits;
 
 	}
 
+	
+	@Override
+	public boolean initialize() {
+		// TODO Auto-generated method stub
+		
+		 return true;
+	}
+	
 }

@@ -4,10 +4,12 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openedit.data.BaseData;
+import org.openedit.util.DateStorageUtil;
 
 
 
@@ -102,7 +104,11 @@ public class HibernateData extends BaseData {
             }
             try {
             	Class<?> paramtype = setter.getParameterTypes()[0];
-				if(paramtype.equals(Integer.class) && inValue instanceof String){
+				if(paramtype.equals(Date.class)  && inValue instanceof String) {
+					inValue = DateStorageUtil.getStorageUtil().parseFromStorage((String)inValue);
+				}
+            	
+            	if(paramtype.equals(Integer.class) && inValue instanceof String){
             		inValue = Integer.valueOf((String)inValue);
             	}
 				if(paramtype.equals(Long.class) && inValue instanceof String){
