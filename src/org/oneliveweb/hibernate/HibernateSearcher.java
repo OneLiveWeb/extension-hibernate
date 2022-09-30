@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.entermediadb.elasticsearch.searchers.BaseElasticSearcher;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -20,6 +22,10 @@ import org.openedit.users.User;
 
 public class HibernateSearcher extends BaseElasticSearcher {
 
+	
+	private static final Log log = LogFactory.getLog(HibernateSearcher.class);
+
+	
 	protected HibernateManager fieldHibernateManager;
 	protected ModuleManager fieldModuleManager;
 
@@ -77,7 +83,8 @@ public class HibernateSearcher extends BaseElasticSearcher {
 		HibernateData data = (HibernateData) inData;
 		Session session = getHibernateManager().getCurrentSession();
 		session.beginTransaction();
-		session.merge(data.getData());
+		Object data2 = data.getData();
+		session.merge(data2);
 		session.getTransaction().commit();
 
 		session.close();
@@ -119,6 +126,7 @@ public class HibernateSearcher extends BaseElasticSearcher {
 	@Override
 	public HitTracker search(SearchQuery inQuery) {
 		String querystring = createQueryString(inQuery);
+		log.info("Searching for " + querystring + "in "+ getSearchType());
 		Query query = getHibernateManager().getCurrentSession().createQuery(querystring);
 		for (Iterator iterator = inQuery.getTerms().iterator(); iterator.hasNext();) {
 			Term term = (Term) iterator.next();
