@@ -124,7 +124,10 @@ public class HibernateManager implements CatalogEnabled {
 			settings.put("hibernate.current_session_context_class", "thread");
 			settings.put("hibernate.show_sql", "true");
 			settings.put("hibernate.format_sql", "true");
-
+			settings.put("hibernate.hbm2ddl.auto", "update");
+			
+			
+			
 			ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(settings).build();
 
 			// Class c = Class.forName("com.package.MyClass"); Make this catalog ID based,

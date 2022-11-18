@@ -19,7 +19,7 @@ import org.openedit.page.Page;
 import org.openedit.page.manage.PageManager;
 import org.openedit.users.User;
 
-public class ElasticHibernateSearcher extends BaseElasticSearcher {
+public class ElasticHibernateSearcher extends BaseElasticSearcher implements OrmDataSearcher {
 
 	protected HibernateManager fieldHibernateManager;
 	protected ModuleManager fieldModuleManager;
@@ -137,7 +137,11 @@ public class ElasticHibernateSearcher extends BaseElasticSearcher {
 		return null;		
 	}
 	
-	
+	public Object loadData(String inId) {
+		long id = Long.valueOf(inId);
+		Object hit = getHibernateManager().getCurrentSession().get(getClassName(), id);
+		return hit;
+	}
 	@Override
 	public void saveData(Data inData) {
 		

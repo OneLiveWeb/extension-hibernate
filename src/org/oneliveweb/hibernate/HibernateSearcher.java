@@ -20,7 +20,7 @@ import org.openedit.hittracker.SearchQuery;
 import org.openedit.hittracker.Term;
 import org.openedit.users.User;
 
-public class HibernateSearcher extends BaseElasticSearcher {
+public class HibernateSearcher extends BaseElasticSearcher implements OrmDataSearcher {
 
 	
 	private static final Log log = LogFactory.getLog(HibernateSearcher.class);
@@ -86,8 +86,9 @@ public class HibernateSearcher extends BaseElasticSearcher {
 		Object data2 = data.getData();
 		session.merge(data2);
 		session.getTransaction().commit();
-
+		
 		session.close();
+		
 
 	}
 
@@ -104,6 +105,13 @@ public class HibernateSearcher extends BaseElasticSearcher {
 		return data;
 
 	}
+	
+	
+	public Object loadData(String inId) {
+		long id = Long.valueOf(inId);
+		Object hit = getHibernateManager().getCurrentSession().get(getClassName(), id);
+		return hit;
+	}
 
 	private String getClassName() {
 		return getPropertyDetails().getBaseSetting("package") + "." + getPropertyDetails().getBaseSetting("class");
@@ -111,16 +119,20 @@ public class HibernateSearcher extends BaseElasticSearcher {
 
 	@Override
 	public Object searchById(String inId) {
-		if (inId == null) {
+		try {
+			if (inId == null) {
+				return null;
+
+			}
+			long id = Integer.valueOf(inId);
+			Object hit = getHibernateManager().getCurrentSession().get(getClassName(), id);
+			HibernateData data = new HibernateData();
+			data.setData(hit);
+
+			return data;
+		} catch (NumberFormatException e) {
 			return null;
-
 		}
-		long id = Integer.valueOf(inId);
-		Object hit = getHibernateManager().getCurrentSession().get(getClassName(), id);
-		HibernateData data = new HibernateData();
-		data.setData(hit);
-
-		return data;
 	}
 
 	@Override
