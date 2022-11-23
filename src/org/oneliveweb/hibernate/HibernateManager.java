@@ -119,6 +119,8 @@ public class HibernateManager implements CatalogEnabled {
 			String password = getMediaArchive().getCatalogSettingValue("hibernate-password");
 			if (password != null && !password.isEmpty()) {
 				settings.put("hibernate.connection.password", password);
+			} else {
+				settings.put("hibernate.connection.password", "");
 			}
 
 			settings.put("hibernate.current_session_context_class", "thread");
