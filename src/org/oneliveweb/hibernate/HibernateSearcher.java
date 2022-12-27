@@ -143,7 +143,11 @@ public class HibernateSearcher extends BaseElasticSearcher implements OrmDataSea
 		for (Iterator iterator = inQuery.getTerms().iterator(); iterator.hasNext();) {
 			Term term = (Term) iterator.next();
 			PropertyDetail detail = getDetail(term.getId());
-			if (detail != null  && detail.isNumber()) {
+			if(detail != null && detail.isDataType("long")) {
+				Long value = Long.valueOf(term.getValue());
+				query.setParameter(term.getId(), value);
+			}
+			else if (detail != null  && detail.isNumber()) {
 				Integer value = Integer.valueOf(term.getValue());
 				query.setParameter(term.getId(), value);
 
