@@ -108,6 +108,9 @@ public class HibernateSearcher extends BaseElasticSearcher implements OrmDataSea
 	
 	
 	public Object loadData(String inId) {
+		if(inId == null) {
+			return null;
+		}
 		long id = Long.valueOf(inId);
 		Object hit = getHibernateManager().getCurrentSession().get(getClassName(), id);
 		return hit;
