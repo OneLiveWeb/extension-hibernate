@@ -32,10 +32,8 @@ public class HibernateSearcher extends BaseElasticSearcher implements OrmDataSea
 	public HibernateManager getHibernateManager() {
 		if (fieldHibernateManager == null) {
 			fieldHibernateManager = (HibernateManager) getModuleManager().getBean(getCatalogId(), "hibernateManager");
-			fieldHibernateManager.setCatalogId(getCatalogId());
 
 		}
-		fieldHibernateManager.setCatalogId(getCatalogId());
 
 		return fieldHibernateManager;
 	}

@@ -17,13 +17,16 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.openedit.CatalogEnabled;
 import org.openedit.ModuleManager;
-import org.openedit.OpenEditException;
 import org.openedit.data.Searcher;
+import org.openedit.page.Page;
 import org.openedit.page.manage.PageManager;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class HibernateManager implements CatalogEnabled {
 
-	protected SessionFactory fieldSessionFactory;
+	protected static SessionFactory fieldSessionFactory;
 	protected PageManager fieldPageManager;
 	protected String fieldCatalogId;
 	private static final Log log = LogFactory.getLog(HibernateManager.class);
@@ -98,25 +101,25 @@ public class HibernateManager implements CatalogEnabled {
 			
 			Map<String, String> settings = new HashMap<>();
 
-			String driver = getMediaArchive().getCatalogSettingValue("hibernate-driver");
+			String driver = getSetting("hibernate-driver");
 			settings.put("connection.driver_class", driver);
 			settings.put("hibernate.connection.driver_class", driver);
 			settings.put("driver_class", driver);
 			settings.put("hibernate.driver_class", driver);
-			String dialect = getMediaArchive().getCatalogSettingValue("hibernate-dialect");
+			String dialect = getSetting("hibernate-dialect");
 			settings.put("dialect", dialect);
 			settings.put("hibernate.dialect", dialect);
 			settings.put("hibernate.connection.dialect", dialect);
 			settings.put("connection.dialect", dialect);
 			// https://topic.alibabacloud.com/a/javasqlsqlexceptionzero-date-value-prohibited-exception-handling_1_27_30012188.html
 			// https://stackoverflow.com/questions/55905022/zerodatetimebehavior-converttonull-not-working-in-jdbc-url-using-hibernate
-			String url = getMediaArchive().getCatalogSettingValue("hibernate-url");
+			String url = getSetting("hibernate-url");
 			settings.put("hibernate.connection.url", url);
 
-			String username = getMediaArchive().getCatalogSettingValue("hibernate-username");
+			String username = getSetting("hibernate-username");
 			settings.put("hibernate.connection.username", username);
 
-			String password = getMediaArchive().getCatalogSettingValue("hibernate-password");
+			String password = getSetting("hibernate-password");
 			if (password != null && !password.isEmpty()) {
 				settings.put("hibernate.connection.password", password);
 			} else {
@@ -175,6 +178,17 @@ public class HibernateManager implements CatalogEnabled {
 
 		return fieldSessionFactory;
 
+	}
+
+	public String getSetting(String inString) {
+		Page page = getPageManager().getPage("/WEB-INF/mysql.json");
+		JsonParser parse = new JsonParser();
+		JsonObject config = parse.parse(page.getContent()).getAsJsonObject();
+		String val = config.get(inString).getAsString();
+		return val;
+		
+		
+	
 	}
 
 	public void setSessionFactory(SessionFactory inSessionFactory) {
