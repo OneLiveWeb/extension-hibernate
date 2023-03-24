@@ -181,9 +181,14 @@ public class HibernateManager implements CatalogEnabled {
 	}
 
 	public String getSetting(String inString) {
-		Page page = getPageManager().getPage("/WEB-INF/mysql.json");
+		
+		Page configfile = getPageManager().getPage("/WEB-INF/mysql-local.json");
+		if(!configfile.exists()) {
+			configfile = getPageManager().getPage("/WEB-INF/mysql.json");	
+		}		
+		
 		JsonParser parse = new JsonParser();
-		JsonObject config = parse.parse(page.getContent()).getAsJsonObject();
+		JsonObject config = parse.parse(configfile.getContent()).getAsJsonObject();
 		String val = config.get(inString).getAsString();
 		return val;
 		
