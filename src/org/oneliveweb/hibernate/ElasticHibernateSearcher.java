@@ -148,7 +148,7 @@ public class ElasticHibernateSearcher extends BaseElasticSearcher implements Orm
 		runDataScript(inData, "presave", null);
 		
 		
-		
+		//Update database first
 		HibernateData data = (HibernateData)inData;
 		Session session= getHibernateManager().getCurrentSession();
 		session.beginTransaction();
@@ -158,7 +158,11 @@ public class ElasticHibernateSearcher extends BaseElasticSearcher implements Orm
 		data.setData(returned);
 		ArrayList update = new ArrayList();
 		update.add(data);
+		//Now exists in MySql but not in elasticsearch
+		
 		updateIndex(update, null);
+		//Now exists in both places
+		
 		
 	}
 	

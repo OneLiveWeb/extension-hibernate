@@ -52,6 +52,7 @@ files.deleteMatch( web + "lib/jboss-transaction-api*.jar");
 files.deleteMatch( web + "lib/mysql-connector-java*.jar");
 files.deleteMatch( web + "lib/stax-ex*.jar");
 files.deleteMatch( web + "lib/txw2*.jar");
+files.deleteMatch( web + "lib/msql*.jar");
 
 
 files.copyFileByMatch( tmp + "/lib/antlr*.jar", web + "/lib/");  
@@ -72,6 +73,7 @@ files.copyFileByMatch( tmp + "/lib/jboss-transaction-api*.jar", web + "/lib/");
 files.copyFileByMatch( tmp + "/lib/mysql-connector-java*.jar", web + "/lib/");  
 files.copyFileByMatch( tmp + "/lib/stax-ex*.jar", web + "/lib/");  
 files.copyFileByMatch( tmp + "/lib/txw2*.jar", web + "/lib/");  
+files.copyFileByMatch( tmp + "/lib/mysql*.jar", web + "/lib/");  
 
 /*  End Hibernate */
 
