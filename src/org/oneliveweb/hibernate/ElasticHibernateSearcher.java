@@ -137,10 +137,15 @@ public class ElasticHibernateSearcher extends BaseElasticSearcher implements Orm
 		return null;		
 	}
 	
-	public Object loadData(String inId) {
+	public Data loadData(String inId) {
 		long id = Long.valueOf(inId);
 		Object hit = getHibernateManager().getCurrentSession().get(getClassName(), id);
-		return hit;
+		HibernateData data = new HibernateData();
+		data.setData(hit);
+		
+
+		
+		return data;
 	}
 	@Override
 	public void saveData(Data inData) {
